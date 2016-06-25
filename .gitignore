@@ -1,0 +1,12 @@
+/dist
+/tmp
+
+/develop
+
+/node_modules
+/typings
+
+/.vscode
+/.idea
+
+tsconfig-dev.json
