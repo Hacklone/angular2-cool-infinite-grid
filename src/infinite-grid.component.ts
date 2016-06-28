@@ -38,6 +38,8 @@ const millisecondsToWaitOnScrollingBeforeRendering = 50;
 })
 export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     private scrollContainer;
+    
+    private currentElementHeight: number = 0;
 
     private itemsPerRow: number;
     private rowsPerViewPort: number;
@@ -281,7 +283,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     }
 
     private async moveDownAsync(scrollTop: number): Promise<void> {
-        const viewPortScrollTop = this.bottomViewPort.scrollTop + this.viewPortHeight;
+        const viewPortScrollTop = this.bottomViewPort.bottomScrollTop;
         const fromIndex = this.bottomViewPort.itemsFromIndex + this.itemsPerViewPort;
         
         this.plannedViewPortScrollTop = viewPortScrollTop;
@@ -326,9 +328,11 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         viewPort.nativeElement = viewPortElement;
 
-        const minimumElementHeight = viewPort.scrollTop + viewPort.height;
-        if(this.element.nativeElement.offsetHeight < minimumElementHeight) {
-            this.element.nativeElement.style.height = `${minimumElementHeight}px`;
+        const minimumElementHeight = viewPort.bottomScrollTop;
+        if(minimumElementHeight > this.currentElementHeight) {
+            this.currentElementHeight = minimumElementHeight;
+            
+            this.element.nativeElement.style.height = `${this.currentElementHeight}px`;
         }
 
         for(let item of viewPort.items) {

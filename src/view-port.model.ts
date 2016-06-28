@@ -13,7 +13,7 @@ export class ViewPort {
 
     items: any[];
     
-    get numberOfItems(): number {
+    get numberOfItems() {
         return this.items.length;
     }
 
