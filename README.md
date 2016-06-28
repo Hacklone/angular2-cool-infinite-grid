@@ -3,7 +3,7 @@
 [downloads-image]: https://img.shields.io/npm/dm/angular2-cool-infinite-grid.svg
 [total-downloads-image]: https://img.shields.io/npm/dt/angular2-cool-infinite-grid.svg
 
-# angular2-cool-http [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]  [![Total Downloads][total-downloads-image]][npm-url]
+# angular2-cool-infinite-grid [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]  [![Total Downloads][total-downloads-image]][npm-url]
 Cool Infinite Grid for angular2
 
 ## Install 
