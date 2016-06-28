@@ -2,8 +2,7 @@ import { EmbeddedViewRef } from '@angular/core';
 
 export class ViewPort {
     itemsFromIndex: number;
-    numberOfItems: number;
-
+    
     height: number;
 
     scrollTop: number;
@@ -13,6 +12,10 @@ export class ViewPort {
     isLastViewPort: boolean;
 
     items: any[];
+    
+    get numberOfItems(): number {
+        return this.items.length;
+    }
 
     renderedItems: EmbeddedViewRef<Object>[];
 

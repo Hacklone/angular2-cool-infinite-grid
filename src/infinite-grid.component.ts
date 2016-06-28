@@ -122,6 +122,14 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         window.removeEventListener('scroll', this.scrollHandler);
         window.removeEventListener('resize', this.resizeHandler);
     }
+    
+    private get visibleItemHeight() {
+        return (this.itemHeight || 0) + (2 * (this.itemSpace || 0));
+    }
+    
+    private get visibleItemWidth() {
+        return (this.itemWidth || 0) + (2 * (this.itemSpace || 0));
+    }
 
     private onWindowResize() {
         this.calculateParameters();
@@ -168,19 +176,17 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         function calculateViewPortHeight() {
             const bareHeight = availableHeight * viewPortSizeMultiplier;
 
-            const rowsFitInHeight = Math.floor(bareHeight / self.itemHeight);
+            const rowsFitInHeight = Math.floor(bareHeight / self.visibleItemHeight);
 
-            return rowsFitInHeight * self.itemHeight;
+            return rowsFitInHeight * self.visibleItemHeight;
         }
 
         function calculateRowsPerViewPort() {
-            return self.viewPortHeight / self.itemHeight;
+            return self.viewPortHeight / self.visibleItemHeight;
         }
 
         function calculateItemsPerRow() {
-            const actualItemWidth = self.itemWidth + (2 * (self.itemSpace || 0));
-
-            return Math.floor(availableWidth / actualItemWidth);
+            return Math.floor(availableWidth / self.visibleItemWidth);
         }
     }
 
@@ -258,12 +264,11 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         const newViewPort = new ViewPort();
         newViewPort.scrollTop = viewPortScrollTop;
-        newViewPort.numberOfItems = viewPortItems.length;
+        newViewPort.items = viewPortItems;
         newViewPort.itemsFromIndex = fromIndex;
         newViewPort.isLastViewPort = false;
         newViewPort.height = this.calculateViewPortHeight(newViewPort.numberOfItems);
-        newViewPort.items = viewPortItems;
-
+        
         this.renderViewPort(newViewPort);        
 
         const oldBottomViewPort = this.bottomViewPort;
@@ -295,12 +300,11 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         const newViewPort = new ViewPort();
         newViewPort.scrollTop = viewPortScrollTop;
-        newViewPort.numberOfItems = viewPortItems.length;
+        newViewPort.items = viewPortItems;
         newViewPort.itemsFromIndex = fromIndex;
         newViewPort.isLastViewPort = viewPortItems.length < this.itemsPerViewPort;
         newViewPort.height = this.calculateViewPortHeight(newViewPort.numberOfItems);
-        newViewPort.items = viewPortItems;
-
+        
         this.renderViewPort(newViewPort);
 
         const oldTopViewPort = this.topViewPort;
@@ -376,8 +380,6 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         const viewPortItems = await this.getItems(fromIndex, 3 * this.itemsPerViewPort);
 
-        let remainingItemCount = Math.max(viewPortItems.length, 0);
-
         if(this.topViewPort) {
             this.destroyViewPort(this.topViewPort);
         }
@@ -385,15 +387,12 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         this.topViewPort = new ViewPort();
 
         this.topViewPort.scrollTop = topScrollTop;
-        this.topViewPort.numberOfItems = remainingItemCount < this.itemsPerViewPort ? remainingItemCount : this.itemsPerViewPort;
         this.topViewPort.itemsFromIndex = fromIndex;
+        this.topViewPort.items = viewPortItems.slice(0, this.itemsPerViewPort);
         this.topViewPort.isLastViewPort = this.topViewPort.numberOfItems < this.itemsPerViewPort;
-        this.topViewPort.height = this.calculateViewPortHeight(this.topViewPort.numberOfItems);
-        this.topViewPort.items = viewPortItems.slice(this.topViewPort.itemsFromIndex, this.topViewPort.itemsFromIndex + this.topViewPort.numberOfItems);
+        this.topViewPort.height = this.calculateViewPortHeight(this.topViewPort.numberOfItems);        
 
         this.renderViewPort(this.topViewPort);
-
-        remainingItemCount = Math.max(remainingItemCount - this.itemsPerViewPort, 0);
 
         if(this.middleViewPort) {
             this.destroyViewPort(this.middleViewPort);
@@ -401,18 +400,13 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         this.middleViewPort = new ViewPort();
 
-        const numberOfItems = Math.max(viewPortItems.length - this.itemsPerViewPort, 0);
-
         this.middleViewPort.scrollTop = topScrollTop + this.viewPortHeight;
-        this.middleViewPort.numberOfItems = remainingItemCount < this.itemsPerViewPort ? remainingItemCount : this.itemsPerViewPort;
         this.middleViewPort.itemsFromIndex = fromIndex + this.itemsPerViewPort;
+        this.middleViewPort.items = viewPortItems.slice(this.itemsPerViewPort, 2 * this.itemsPerViewPort);
         this.middleViewPort.isLastViewPort = this.middleViewPort.numberOfItems < this.itemsPerViewPort;
         this.middleViewPort.height = this.calculateViewPortHeight(this.middleViewPort.numberOfItems);
-        this.middleViewPort.items = viewPortItems.slice(this.middleViewPort.itemsFromIndex, this.middleViewPort.itemsFromIndex + this.middleViewPort.numberOfItems);
 
-        this.renderViewPort(this.middleViewPort);   
-
-        remainingItemCount = Math.max(remainingItemCount - this.itemsPerViewPort, 0);  
+        this.renderViewPort(this.middleViewPort);
 
         if(this.bottomViewPort) {
             this.destroyViewPort(this.bottomViewPort);
@@ -421,11 +415,10 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         this.bottomViewPort = new ViewPort();
 
         this.bottomViewPort.scrollTop = topScrollTop + (2 * this.viewPortHeight);
-        this.bottomViewPort.numberOfItems = remainingItemCount < this.itemsPerViewPort ? remainingItemCount : this.itemsPerViewPort;
         this.bottomViewPort.itemsFromIndex = fromIndex + (2 * this.itemsPerViewPort);
+        this.bottomViewPort.items = viewPortItems.slice(2 * this.itemsPerViewPort, 3 * this.itemsPerViewPort);
         this.bottomViewPort.isLastViewPort = this.bottomViewPort.numberOfItems < this.itemsPerViewPort;
         this.bottomViewPort.height = this.calculateViewPortHeight(this.bottomViewPort.numberOfItems);
-        this.bottomViewPort.items = viewPortItems.slice(this.bottomViewPort.itemsFromIndex, this.bottomViewPort.itemsFromIndex + this.bottomViewPort.numberOfItems);
 
         this.renderViewPort(this.bottomViewPort);          
     } 
@@ -437,6 +430,6 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         let rowCount = Math.ceil(numberOfItems / this.itemsPerRow);
 
-        return rowCount * (this.itemHeight + (2 * this.itemSpace))
+        return rowCount * this.visibleItemHeight;
     }
 }
