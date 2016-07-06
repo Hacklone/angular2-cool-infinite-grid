@@ -33,6 +33,7 @@ const millisecondsToWaitOnScrollingBeforeRendering = 50;
 
         :host {
             display: block;
+            position: relative;
         }
     `]
 })
