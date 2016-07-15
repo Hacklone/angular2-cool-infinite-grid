@@ -1,12 +1,12 @@
-import { 
-    Component, 
-    ChangeDetectionStrategy, 
-    ElementRef, 
-    ViewContainerRef, 
+import {
+    Component,
+    ChangeDetectionStrategy,
+    ElementRef,
+    ViewContainerRef,
     TemplateRef,
     ContentChild,
-    Input, 
-    OnInit, 
+    Input,
+    OnInit,
     OnDestroy
 } from '@angular/core';
 
@@ -39,7 +39,7 @@ const millisecondsToWaitOnScrollingBeforeRendering = 50;
 })
 export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     private scrollContainer;
-    
+
     private currentElementHeight: number = 0;
 
     private itemsPerRow: number;
@@ -125,11 +125,11 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         window.removeEventListener('scroll', this.scrollHandler);
         window.removeEventListener('resize', this.resizeHandler);
     }
-    
+
     private get visibleItemHeight() {
         return (this.itemHeight || 0) + (2 * (this.itemSpace || 0));
     }
-    
+
     private get visibleItemWidth() {
         return (this.itemWidth || 0) + (2 * (this.itemSpace || 0));
     }
@@ -141,20 +141,27 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     }
 
     private async getItems(fromIndex: number, numberOfItems: number): Promise<any[]> {
-        const result = this.itemIterator.next(fromIndex, numberOfItems);
+        try {
+            const result = this.itemIterator.next(fromIndex, numberOfItems);
 
-        if (!result) {
-            return null;
+            if (!result) {
+                return [];
+            }
+
+            if (typeof (result.value.then) === 'function') {
+                return await result.value;
+            }
+            else if (result.value instanceof Array) {
+                return result.value;
+            }
+
+            return [];
+        }
+        catch (e) {
+            console.log(e);
         }
 
-        if (typeof (result.value.then) === 'function') {
-            return await result.value;
-        }
-        else if (result.value instanceof Array) {
-            return result.value;
-        }
-
-        return null;
+        return [];
     }
 
     private calculateParameters() {
@@ -209,10 +216,10 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     }
 
     private async handleCurrentScroll(scrollTop: number): Promise<any> {
-        if(scrollTop > this.bottomViewPort.bottomScrollTop && this.isLastViewPortRendered) {
+        if (scrollTop > this.bottomViewPort.bottomScrollTop && this.isLastViewPortRendered) {
             return;
-        }        
-        if(scrollTop < this.topViewPort.scrollTop || scrollTop > this.bottomViewPort.bottomScrollTop) {
+        }
+        if (scrollTop < this.topViewPort.scrollTop || scrollTop > this.bottomViewPort.bottomScrollTop) {
             await this.reRenderAsync(scrollTop);
         }
         else if (scrollTop < this.moveTopBoundary) {
@@ -261,7 +268,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if(!viewPortItems || !viewPortItems.length) {
+        if (!viewPortItems || !viewPortItems.length) {
             return;
         }
 
@@ -271,8 +278,8 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         newViewPort.itemsFromIndex = fromIndex;
         newViewPort.isLastViewPort = false;
         newViewPort.height = this.calculateViewPortHeight(newViewPort.numberOfItems);
-        
-        this.renderViewPort(newViewPort);        
+
+        this.renderViewPort(newViewPort);
 
         const oldBottomViewPort = this.bottomViewPort;
 
@@ -286,7 +293,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     private async moveDownAsync(scrollTop: number): Promise<void> {
         const viewPortScrollTop = this.bottomViewPort.bottomScrollTop;
         const fromIndex = this.bottomViewPort.itemsFromIndex + this.itemsPerViewPort;
-        
+
         this.plannedViewPortScrollTop = viewPortScrollTop;
 
         const viewPortItems = await this.getItems(fromIndex, this.itemsPerViewPort);
@@ -295,7 +302,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if(!viewPortItems || !viewPortItems.length) {
+        if (!viewPortItems || !viewPortItems.length) {
             this.bottomViewPort.isLastViewPort = true;
 
             return;
@@ -307,7 +314,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         newViewPort.itemsFromIndex = fromIndex;
         newViewPort.isLastViewPort = viewPortItems.length < this.itemsPerViewPort;
         newViewPort.height = this.calculateViewPortHeight(newViewPort.numberOfItems);
-        
+
         this.renderViewPort(newViewPort);
 
         const oldTopViewPort = this.topViewPort;
@@ -317,7 +324,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         this.bottomViewPort = newViewPort;
 
         this.destroyViewPort(oldTopViewPort);
-    }   
+    }
 
     private renderViewPort(viewPort: ViewPort) {
         const viewPortElement = document.createElement('div');
@@ -330,13 +337,13 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         viewPort.nativeElement = viewPortElement;
 
         const minimumElementHeight = viewPort.bottomScrollTop;
-        if(minimumElementHeight > this.currentElementHeight) {
+        if (minimumElementHeight > this.currentElementHeight) {
             this.currentElementHeight = minimumElementHeight;
-            
+
             this.element.nativeElement.style.height = `${this.currentElementHeight}px`;
         }
 
-        for(let item of viewPort.items) {
+        for (let item of viewPort.items) {
             let embeddedView = this.template.createEmbeddedView({
                 $implicit: item
             });
@@ -353,7 +360,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
             itemNode.style.width = `${this.itemWidth}px`;
             itemNode.style.margin = `${this.itemSpace}px`;
 
-            for(let viewNode of embeddedView.rootNodes) {
+            for (let viewNode of embeddedView.rootNodes) {
                 itemNode.appendChild(viewNode);
             }
 
@@ -364,7 +371,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     }
 
     private destroyViewPort(viewPort: ViewPort) {
-        for(let item of viewPort.renderedItems) {
+        for (let item of viewPort.renderedItems) {
             item.destroy();
         }
 
@@ -385,7 +392,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         const viewPortItems = await this.getItems(fromIndex, 3 * this.itemsPerViewPort);
 
-        if(this.topViewPort) {
+        if (this.topViewPort) {
             this.destroyViewPort(this.topViewPort);
         }
 
@@ -395,11 +402,11 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         this.topViewPort.itemsFromIndex = fromIndex;
         this.topViewPort.items = viewPortItems.slice(0, this.itemsPerViewPort);
         this.topViewPort.isLastViewPort = this.topViewPort.numberOfItems < this.itemsPerViewPort;
-        this.topViewPort.height = this.calculateViewPortHeight(this.topViewPort.numberOfItems);        
+        this.topViewPort.height = this.calculateViewPortHeight(this.topViewPort.numberOfItems);
 
         this.renderViewPort(this.topViewPort);
 
-        if(this.middleViewPort) {
+        if (this.middleViewPort) {
             this.destroyViewPort(this.middleViewPort);
         }
 
@@ -413,9 +420,9 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         this.renderViewPort(this.middleViewPort);
 
-        if(this.bottomViewPort) {
+        if (this.bottomViewPort) {
             this.destroyViewPort(this.bottomViewPort);
-        }   
+        }
 
         this.bottomViewPort = new ViewPort();
 
@@ -425,11 +432,11 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         this.bottomViewPort.isLastViewPort = this.bottomViewPort.numberOfItems < this.itemsPerViewPort;
         this.bottomViewPort.height = this.calculateViewPortHeight(this.bottomViewPort.numberOfItems);
 
-        this.renderViewPort(this.bottomViewPort);          
-    } 
+        this.renderViewPort(this.bottomViewPort);
+    }
 
     private calculateViewPortHeight(numberOfItems: number): number {
-        if(numberOfItems === this.itemsPerViewPort) {
+        if (numberOfItems === this.itemsPerViewPort) {
             return this.viewPortHeight;
         }
 
