@@ -126,6 +126,10 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         window.removeEventListener('resize', this.resizeHandler);
     }
 
+    public async reRenderAsync(): Promise<void> {
+        await this.reRenderFromScrollAsync(this.scrollContainer.scrollTop);
+    }
+
     private get visibleItemHeight() {
         return (this.itemHeight || 0) + (2 * (this.itemSpace || 0));
     }
@@ -137,7 +141,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     private onWindowResize() {
         this.calculateParameters();
 
-        this.reRenderAsync(this.scrollContainer.scrollTop);
+        this.reRenderFromScrollAsync(this.scrollContainer.scrollTop);
     }
 
     private async getItems(fromIndex: number, numberOfItems: number): Promise<any[]> {
@@ -220,7 +224,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
             return;
         }
         if (scrollTop < this.topViewPort.scrollTop || scrollTop > this.bottomViewPort.bottomScrollTop) {
-            await this.reRenderAsync(scrollTop);
+            await this.reRenderFromScrollAsync(scrollTop);
         }
         else if (scrollTop < this.moveTopBoundary) {
             await this.moveUpAsync(scrollTop);
@@ -379,12 +383,12 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     }
 
     private async initialRenderAsync(): Promise<any> {
-        await this.reRenderAsync(0);
+        await this.reRenderFromScrollAsync(0);
 
         this.calculateMoveBoundaries();
     }
 
-    public async reRenderAsync(scrollTop: number): Promise<any> {
+    private async reRenderFromScrollAsync(scrollTop: number): Promise<void> {
         const currentViewPortIndex = Math.floor(scrollTop / this.viewPortHeight);
         const topScrollTop = currentViewPortIndex * this.viewPortHeight;
 
