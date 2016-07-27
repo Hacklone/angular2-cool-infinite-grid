@@ -384,7 +384,7 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
         this.calculateMoveBoundaries();
     }
 
-    private async reRenderAsync(scrollTop: number): Promise<any> {
+    public async reRenderAsync(scrollTop: number): Promise<any> {
         const currentViewPortIndex = Math.floor(scrollTop / this.viewPortHeight);
         const topScrollTop = currentViewPortIndex * this.viewPortHeight;
 
