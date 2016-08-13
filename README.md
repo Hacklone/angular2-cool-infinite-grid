@@ -14,9 +14,19 @@ Cool Infinite Grid for angular2
 
 ## Setup
 ```javascript
+import { NgModule } from '@angular/core';
+import { CoolInfiniteGridModule } from 'angular2-cool-infinite-grid';
+
+@NgModule({
+    imports: [CoolInfiniteGridModule]
+})
+export class MyAppModule {}
+```
+
+## Usage
+```javascript
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
-import { COOL_INFINITE_GRID_DIRECTIVES } from 'angular2-cool-infinite-grid';
 
 @Component({
     selector: 'my-app',
@@ -27,8 +37,7 @@ import { COOL_INFINITE_GRID_DIRECTIVES } from 'angular2-cool-infinite-grid';
                 <div>{{ item.name }}</div>
             </template>
         </cool-infinite-grid>
-    `,
-    directives: [COOL_INFINITE_GRID_DIRECTIVES]
+    `
 })
 export class MyAppComponent {
     myItemIterator;
