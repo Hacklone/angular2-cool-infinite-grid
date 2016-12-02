@@ -7,7 +7,7 @@ import {
     ContentChild,
     Input,
     OnInit,
-    OnDestroy
+    HostListener
 } from '@angular/core';
 
 import { IIterator } from './iterator.interface';
@@ -37,7 +37,7 @@ const millisecondsToWaitOnScrollingBeforeRendering = 50;
         }
     `]
 })
-export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
+export class CoolInfiniteGridComponent implements OnInit {
     private scrollContainer;
 
     private currentElementHeight: number = 0;
@@ -54,11 +54,18 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
     private moveTopBoundary: number;
     private moveBottomBoundary: number;
 
-    private scrollHandler: EventListener;
-    private resizeHandler: EventListener;
-
     @ContentChild(TemplateRef)
     private template: TemplateRef<Object>;
+
+    @HostListener('window:scroll')
+    private scrollHandler() {
+        this.onContainerScroll();
+    }
+
+    @HostListener('window:resize')
+    private resizeHandler() {
+        this.onWindowResize();
+    }
 
     constructor(private element: ElementRef, private viewContainer: ViewContainerRef) { }
 
@@ -86,18 +93,6 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
         await this.initialRenderAsync();
 
-        this.scrollHandler = () => {
-            self.onContainerScroll();
-        };
-
-        this.resizeHandler = () => {
-            self.onWindowResize();
-        }
-
-        window.addEventListener('scroll', this.scrollHandler);
-
-        window.addEventListener('resize', this.resizeHandler);
-
         function getScrollContainer() {
             let currentNode = self.element.nativeElement.parentNode;
 
@@ -119,11 +114,6 @@ export class CoolInfiniteGridComponent implements OnInit, OnDestroy {
 
             return parent;
         }
-    }
-
-    public ngOnDestroy() {
-        window.removeEventListener('scroll', this.scrollHandler);
-        window.removeEventListener('resize', this.resizeHandler);
     }
 
     public async reRenderAsync(): Promise<void> {
