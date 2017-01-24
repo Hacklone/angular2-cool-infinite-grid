@@ -1,15 +1,25 @@
 {
   "name": "angular2-cool-infinite-grid",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "Cool Infinite Grid for angular2",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
   "typings": "index.d.ts",
   "dependencies": {
-    "@angular/core": ">= 2.0.0"
+    "@angular/core": ">= 2.4.4",
+    "rxjs": ">= 5.0.3"
+  },
+  "devDependencies": {
+    "@angular/compiler": "^2.4.4",
+    "@angular/compiler-cli": "^2.4.4",
+    "@angular/platform-server": "^2.4.4",
+    "typescript": "^2.1.5"
   },
   "scripts": {
-    "build": "rm -rf ./dist && tsc --project tsconfig-es5.json && tsc --project tsconfig-es2015.json && cp ./README.md ./dist/README.md && cp ./package.json ./dist/package.json"
+    "clean": "rm -rf ./dist",
+    "compile": "./node_modules/.bin/ngc",
+    "copy-files": "cp ./README.md ./dist/README.md && cp ./package.json ./dist/package.json",
+    "build": "npm run clean && npm run compile && npm run copy-files"
   },
   "repository": {
     "type": "git",

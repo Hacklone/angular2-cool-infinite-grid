@@ -13,20 +13,17 @@ import {
 import { IIterator } from './iterator.interface';
 import { ViewPort } from './view-port.model';
 
-const viewPortSizeMultiplier = 1.5;
-const viewPortMoveBoundaryMultiplier = 0.4;
-const scrollContainerAttributeName = 'cool-infinite-grid-container';
-const millisecondsToWaitOnScrollingBeforeRendering = 50;
+const VIEW_PORT_SIZE_MULTIPLIER = 1.5;
+const VIEW_PORT_MOVE_BOUNDARY_MULTIPLIER = 0.4;
+const SCROLL_CONTAINER_ATTRIBUTE_NAME = 'cool-infinite-grid-container';
+const MILLISECONDS_TO_WAIT_ON_SCROLLING_BEFORE_RENDERING = 50;
 
 @Component({
     selector: 'cool-infinite-grid',
-    template: `
-        <div class="cool-infinite-grid">
-        </div>
-    `,
+    template: '<div class="cool-infinite-grid"></div>',
     changeDetection: ChangeDetectionStrategy.OnPush,
     styles: [`
-        :host-context([${scrollContainerAttributeName}]) {
+        :host-context([cool-infinite-grid-container]) {
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -89,7 +86,7 @@ export class CoolInfiniteGridComponent implements OnInit {
         this.calculateParameters();
 
         this.moveTopBoundary = 0;
-        this.moveBottomBoundary = this.viewPortHeight * (1 - viewPortMoveBoundaryMultiplier);
+        this.moveBottomBoundary = this.viewPortHeight * (1 - VIEW_PORT_MOVE_BOUNDARY_MULTIPLIER);
 
         await this.initialRenderAsync();
 
@@ -97,7 +94,7 @@ export class CoolInfiniteGridComponent implements OnInit {
             let currentNode = self.element.nativeElement.parentNode;
 
             while (currentNode) {
-                if (currentNode.attributes && currentNode.attributes[scrollContainerAttributeName]) {
+                if (currentNode.attributes && currentNode.attributes[SCROLL_CONTAINER_ATTRIBUTE_NAME]) {
                     break;
                 }
 
@@ -110,7 +107,7 @@ export class CoolInfiniteGridComponent implements OnInit {
 
             const parent = self.element.nativeElement.parentNode;
 
-            parent.setAttribute(scrollContainerAttributeName, 'true');
+            parent.setAttribute(SCROLL_CONTAINER_ATTRIBUTE_NAME, 'true');
 
             return parent;
         }
@@ -178,7 +175,7 @@ export class CoolInfiniteGridComponent implements OnInit {
         }
 
         function calculateViewPortHeight() {
-            const bareHeight = availableHeight * viewPortSizeMultiplier;
+            const bareHeight = availableHeight * VIEW_PORT_SIZE_MULTIPLIER;
 
             const rowsFitInHeight = Math.floor(bareHeight / self.visibleItemHeight);
 
@@ -206,7 +203,7 @@ export class CoolInfiniteGridComponent implements OnInit {
 
             this.handleCurrentScroll(latestScrollTop);
 
-        }, millisecondsToWaitOnScrollingBeforeRendering);
+        }, MILLISECONDS_TO_WAIT_ON_SCROLLING_BEFORE_RENDERING);
     }
 
     private async handleCurrentScroll(scrollTop: number): Promise<any> {
@@ -230,7 +227,7 @@ export class CoolInfiniteGridComponent implements OnInit {
     }
 
     private calculateMoveBoundaries() {
-        this.moveTopBoundary = this.topViewPort.scrollTop + (this.viewPortHeight * (1 - viewPortMoveBoundaryMultiplier));
+        this.moveTopBoundary = this.topViewPort.scrollTop + (this.viewPortHeight * (1 - VIEW_PORT_MOVE_BOUNDARY_MULTIPLIER));
 
         if (this.moveTopBoundary < 0) {
             this.moveTopBoundary = 0;
@@ -240,7 +237,7 @@ export class CoolInfiniteGridComponent implements OnInit {
             this.moveBottomBoundary = Infinity;
         }
         else {
-            this.moveBottomBoundary = this.middleViewPort.scrollTop + (this.viewPortHeight * (1 - viewPortMoveBoundaryMultiplier));
+            this.moveBottomBoundary = this.middleViewPort.scrollTop + (this.viewPortHeight * (1 - VIEW_PORT_MOVE_BOUNDARY_MULTIPLIER));
         }
     }
 

@@ -1,6 +1,8 @@
 /dist
 /tmp
 
+/compiled
+
 /develop
 
 /node_modules
