@@ -1,9 +1,9 @@
 export interface IIterator<T> {
-    next(...args: any[]): IIterated<T>
+  next(...args: any[]): IIterated<T>
 }
 
 export interface IIterated<T> {
-    done: boolean;
+  done: boolean;
 
-    value: T;
+  value: T;
 }

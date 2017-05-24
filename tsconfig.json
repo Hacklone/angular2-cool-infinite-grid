@@ -3,14 +3,13 @@
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "mapRoot": "../../../../",
     "lib": [
-      "dom",
-      "es6"
+      "es6",
+      "dom"
     ],
     "module": "commonjs",
     "moduleResolution": "node",
-    "noEmitOnError": true,
+    "noEmitOnError": false,
     "noImplicitAny": false,
     "outDir": "dist",
     "rootDir": ".",

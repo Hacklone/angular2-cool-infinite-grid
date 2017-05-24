@@ -9,4 +9,5 @@ export { IIterator, IIterated } from './src/iterator.interface';
   exports: [CoolInfiniteGridComponent],
   declarations: [CoolInfiniteGridComponent]
 })
-export class CoolInfiniteGridModule {}
+export class CoolInfiniteGridModule {
+}

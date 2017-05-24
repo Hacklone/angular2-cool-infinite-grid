@@ -1,29 +1,29 @@
 import { EmbeddedViewRef } from '@angular/core';
 
 export class ViewPort {
-    itemsFromIndex: number;
-    
-    height: number;
+  itemsFromIndex: number;
 
-    scrollTop: number;
+  height: number;
 
-    nativeElement: any;
+  scrollTop: number;
 
-    isLastViewPort: boolean;
+  nativeElement: any;
 
-    items: any[];
-    
-    get numberOfItems() {
-        return this.items.length;
-    }
+  isLastViewPort: boolean;
 
-    renderedItems: EmbeddedViewRef<Object>[];
+  items: any[];
 
-    get bottomScrollTop() {
-        return this.scrollTop + this.height;
-    }
+  get numberOfItems() {
+    return this.items.length;
+  }
 
-    constructor() {
-        this.renderedItems = [];
-    }
+  renderedItems: EmbeddedViewRef<Object>[];
+
+  get bottomScrollTop() {
+    return this.scrollTop + this.height;
+  }
+
+  constructor() {
+    this.renderedItems = [];
+  }
 }
