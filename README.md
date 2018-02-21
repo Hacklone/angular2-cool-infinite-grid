@@ -32,10 +32,10 @@ import { Http } from '@angular/http';
     selector: 'my-app',
     template: `
         <cool-infinite-grid [itemIterator]="myItemIterator" [itemHeight]="40" [itemWidth]="35" [itemSpace]="5">
-            <template let-item>
+            <ng-template let-item>
                 <img [src]="item.imageUrl">
                 <div>{{ item.name }}</div>
-            </template>
+            </ng-template>
         </cool-infinite-grid>
     `
 })
