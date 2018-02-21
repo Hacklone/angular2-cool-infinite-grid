@@ -1,6 +1,6 @@
 {
   "name": "angular2-cool-infinite-grid",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Cool Infinite Grid for angular",
   "main": "index.js",
   "typings": "index.d.ts",

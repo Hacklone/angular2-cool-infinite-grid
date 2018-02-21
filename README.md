@@ -58,8 +58,10 @@ export class MyAppComponent {
 
 Place the ```cool-infinite-grid-container``` attribute on any html element. This element will be the scrolling container.
 
+>Note: ```cool-infinite-grid-container``` won't work on the ```<body>``` element as the body element cannot be scrolled.
+
 ```html 
-<body cool-infinite-grid-container>
+<html cool-infinite-grid-container>
 ```
 
 # License
